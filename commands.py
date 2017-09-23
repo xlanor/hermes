@@ -4,13 +4,14 @@
 # Hermes's core
 # Written by xlanor
 ##
+import json
 from modules.coinhako import Coinhako
 from tokens import channels
 import traceback,time,requests,string
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job
 
 class Commands():
-	def alert(bot,job):
+	def coinhakomsg():
 		try:
 			eth = "<b>Ethereum</b>\n"
 			btc = "<b>Bitcoin</b>\n"
@@ -52,9 +53,26 @@ class Commands():
 					btc += "🇺🇸💰USD Sell: "
 					btc += each['bsellusd']
 					btc += "\n"
-			combinedmessage = "🇨🇭 <b>Coin Hako Prices</b>\n\n"+ eth + "\n" + btc
-			bot.sendMessage(chat_id=channels.channellist('livechannel'),text=combinedmessage,parse_mode='HTML')
+			combinedmessage = "👛<b>Coin Hako Prices</b>\n\n"+ eth + "\n" + btc
 		except:
 			catcherror = traceback.format_exc()
-			bot.sendMessage(chat_id=channels.channellist('error'), text=str(catcherror)+str(info),parse_mode='HTML')
+			print(catcherror)
+			bot.sendMessage(chat_id=channels.channellist('errorchannel'), text=str(catcherror),parse_mode='HTML')
+		return combinedmessage
+	def alert(bot,job):
+		try:
+			message = Commands.coinhakomsg()
+			bot.sendMessage(chat_id=channels.channellist('stagingchannel'),text=message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			print(catcherror)
+			bot.sendMessage(chat_id=channels.channellist('errorchannel'), text=str(catcherror),parse_mode='HTML')
+	def hako(bot,update):
+		try:
+			message = Commands.coinhakomsg()
+			bot.sendMessage(chat_id=update.message.chat_id, text=message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			print(catcherror)
+			bot.sendMessage(chat_id=channels.channellist('errorchannel'), text=str(catcherror),parse_mode='HTML')
 		
