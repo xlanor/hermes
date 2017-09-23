@@ -6,6 +6,7 @@ Hermes is a telegram bot written in python3 to check prices of cryptocurrency
 Currently, Hermes only supports coinhako
 
 ## Licensing
+Hermes is licensed under the [AGPL v3](LICENSE)
 
 ## Channel
 Hermes is currently broadcasting on telegram at [Crypto Price Check](https://t.me/coinhakoprice)
