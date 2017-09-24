@@ -15,6 +15,10 @@ def hermes():
 	#commands
 	start_handler = CommandHandler('hako', Commands.hako)
 	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('liqui', Commands.liqui)
+	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('calckyber', Commands.calculatekyber)
+	dispatcher.add_handler(start_handler)
 	#job for channels
 	j = updater.job_queue
 	job_minute = Job(Commands.alert, 30.0)
