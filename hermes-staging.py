@@ -17,7 +17,11 @@ def hermes():
 	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('liqui', Commands.liqui)
 	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('gemini', Commands.gem)
+	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('calckyber', Commands.calculatekyber)
+	dispatcher.add_handler(start_handler)
+	start_handler = CommandHandler('calceth', Commands.calculateeth)
 	dispatcher.add_handler(start_handler)
 	#job for channels
 	j = updater.job_queue
