@@ -17,10 +17,10 @@ For individual/group usage, Hermes supports these commands
 
 * /hako (Fetches BTC, ETH data from CoinHako)
 * /liqui (Fetches KNC data from liqui.io, and then converts to fiat value using rates from CoinHako)
-* /calckyber <number>KNC (Calculates value of x number of kyber tokens)
-* /calckyber $<number> (Calculates number of kyber tokens based on value)
-* /calceth <number>ETH (Calculates value of x number of ETH)
-* /calceth $<number> (Calculates ETH based on value)
+* /calckyber [number]KNC (Calculates value of x number of kyber tokens)
+* /calckyber $[number] (Calculates number of kyber tokens based on value)
+* /calceth [number]ETH (Calculates value of x number of ETH)
+* /calceth $[number] (Calculates ETH based on value)
 
 ## Credits
 * [Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot) for making a wonderful wrapper, and having an excellent community who are willing to devote time to assist others.
