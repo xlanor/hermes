@@ -19,16 +19,21 @@ class Cryptocompare():
 	def geturl(self,coin):
 		url = "https://min-api.cryptocompare.com/data/price?fsym="+coin+"&tsyms=USD"
 		coinurl = sess.get(url).json()
-		usdval = coinurl['USD']
-		sgdval = self.convertusdsgd(usdval)
-		get24h = self.get24h(coin)
 		coinli = []
-		coinli.append({"usd":usdval})
-		coinli.append({"sgd":sgdval})
-		coinli = coinli + get24h
-		print(get24h)
-		print(coinli)
-		return coinli
+		if "Response" in coinurl:
+			coinli.append({"usd":"-"})
+			coinli.append({"sgd":"-"})
+			return coinli
+		else:
+			usdval = coinurl['USD']
+			sgdval = self.convertusdsgd(usdval)
+			get24h = self.get24h(coin)
+			coinli.append({"usd":usdval})
+			coinli.append({"sgd":sgdval})
+			coinli = coinli + get24h
+			print(get24h)
+			print(coinli)
+			return coinli
 
 	def convertusdsgd(self,value):
 		c = CurrencyConverter()

@@ -22,9 +22,10 @@ class Ethplorer():
 	def scanaddress(self,address):
 		url = "https://api.ethplorer.io/getAddressInfo/"+address+"?apiKey=freekey"
 		walleturl = requests.get(url).json()
-		try: #check if valid wallet
-			walleturl['error']
-		except: #yay, an except is what we're looking for
+		print(walleturl)
+		if "error" in walleturl:
+			return "boo"
+		else: 
 			walletdetails = {}
 			web3 = Web3(HTTPProvider('http://localhost:8545'))
 			ethbalance = walleturl["ETH"]["balance"]
@@ -38,6 +39,7 @@ class Ethplorer():
 					walletdetails["ETH"].append({"usd":each['usd']})
 			for token in walleturl['tokens']:
 				symbol = token['tokenInfo']['symbol']
+				print('\n'+symbol)
 				fiatval = Cryptocompare().geturl(symbol)
 				balance = token['balance']
 				convertedbalance = web3.fromWei(balance,'ether')
@@ -51,7 +53,6 @@ class Ethplorer():
 						walletdetails[symbol].append({"usd":each['usd']})
 			print(walletdetails)
 			return walletdetails
-		else: #boo, we don't want this.
-			return "boo"
+		
 
 
