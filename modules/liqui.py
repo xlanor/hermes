@@ -9,14 +9,15 @@
 import json
 import logging
 import requests
+from currency_converter import CurrencyConverter
 
 class Liqui():
 	def knceth(self):
 		knc = requests.get("https://api.liqui.io/api/3/ticker/knc_eth").json()
 		knc_buy_price = knc["knc_eth"]["buy"]
 		knc_sell_price = knc["knc_eth"]["sell"]
-		ethersgd = self.ethersgd()
-		etherusd = self.etherusd()
+		ethersgd = self.ethsgd()
+		etherusd = self.ethusd()
 		for each in ethersgd:
 			if "esellsgd" in each:
 				ethsgd = each['esellsgd']
@@ -38,19 +39,29 @@ class Liqui():
 		kncli.append({"kncbuyusd":kncbuyusd})
 		kncli.append({"kncsellusd":kncsellusd})
 		return kncli
-	def ethersgd(self):
-		ether = requests.get("https://www.coinhako.com/api/v1/price/currency/ETHSGD").json()
-		e_buy_price = ether['data']['buy_price']
-		e_selling_price = ether['data']['sell_price']
-		ethersgd = []
-		ethersgd.append({"ebuysgd":e_buy_price})
-		ethersgd.append({"esellsgd":e_selling_price})
-		return ethersgd
-	def etherusd(self):
-		ether = requests.get("https://www.coinhako.com/api/v1/price/currency/ETHUSD").json()
-		e_buy_price = ether['data']['buy_price']
-		e_selling_price = ether['data']['sell_price']
-		etherusd = []
-		etherusd.append({"ebuyusd":e_buy_price})
-		etherusd.append({"esellusd":e_selling_price})
-		return etherusd
+
+	def geteth(self):
+		eth = requests.get("https://api.gemini.com/v1/pubticker/ethusd").json()
+		return eth	
+
+	def ethusd(self):
+		eth = self.geteth()
+		ethli = []
+		eth_buy_price = eth['bid']
+		eth_sell_price = eth['ask']
+		ethli.append({"ebuyusd":eth_buy_price})
+		ethli.append({"esellusd":eth_sell_price})
+		return ethli
+
+	def ethsgd(self):
+		eth = self.geteth()
+		ethli = []
+		eth_buy_price = eth['bid']
+		eth_sell_price = eth['ask']
+		c = CurrencyConverter()
+		converted_eth_buy_price = c.convert(float(eth_buy_price),'USD','SGD')
+		converted_eth_sell_price = c.convert(float(eth_sell_price),'USD','SGD')
+		ethli.append({"ebuysgd":converted_eth_buy_price})
+		ethli.append({"esellsgd":converted_eth_sell_price})
+		return ethli
+
