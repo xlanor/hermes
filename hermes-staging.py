@@ -38,13 +38,13 @@ def hermes():
 			WALLET: [MessageHandler(Filters.text,Commands.wallet)]
 		},
 
-		fallbacks=[CommandHandler('cancel', Commands.cancel)]
+		fallbacks=[CommandHandler('cancel', Commands.cancel)],
+		per_user = 'true'
 	)
-	dispatcher.add_handler(conv_handler)
+	dispatcher.add_handler(conv_handler,1)
 	#job for channels
 	j = updater.job_queue
-	job_minute = Job(Commands.alert, 75.0)
-	j.put(job_minute, next_t=0.0)
+	job_minute = j.run_repeating(Commands.alert,180,0)
 	#starts the bot
 	updater.start_polling()
 	updater.idle()

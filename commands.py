@@ -14,6 +14,7 @@ from modules.cryptocompare import Cryptocompare
 from modules.checkaddress import web3check
 from modules.portfoliomessage import Pmessage
 from modules.cryptocomparemsg import CryptoComparemsg
+from modules.portfoliocalculator import Calculations
 from tokens import channels,SQL
 from contextlib import closing
 import traceback,time,requests,string,pymysql,datetime
@@ -139,7 +140,6 @@ class Commands():
 	def alert(bot,job): 
 		try:
 			cryptocompare = Commands.cryptocomparemsg()
-			print(cryptocompare)
 			liquimessage = Commands.liquimsg()
 			fullmessage = cryptocompare + "\n" + liquimessage 
 			fullmessage += "\n "
@@ -355,11 +355,22 @@ class Commands():
 						else:
 							username = data[1]
 							address = data[3]
-							waitingmsg = "This will take awhile, please wait :)\n"
-							waitingmsg += "Here's a baby seal to pass the time ◕ᴥ◕"
+							waitingmsg = "This will take approx 20-30seconds, please wait :)\n"
+							waitingmsg += "Here's a baby seal to pass the time ◕ᴥ◕\n"
+							waitingmsg += "While you are waiting, these are the steps that I'm using to calculate your portfolio\n"
+							waitingmsg += "Firstly, I have a cronjob scraping MEW's github every 30min for token addresses\n"
+							waitingmsg += "I then query your wallet address against Ethplorer's API to get a list of tokens\n"
+							waitingmsg += "For accuracy's sake, I then use that list of tokens and match it against my database\n"
+							waitingmsg += "I then use the token address retrieved from my database in etherscan's API to get the balance\n"
+							waitingmsg += "The token symbol is then compared against CryptoCompare to get the latest value\n"
+							waitingmsg += "Finally, CEB rates are used to convert USD -> SGD\n"
+							waitingmsg += "That wasn't so hard, was it? Give this seal a hug! ◕ᴥ◕\n"
+							waitingmsg += "If you have issues with the output contact @fatalityx to report bugs!"
+
 							bot.sendMessage(chat_id=update.message.chat_id, text=waitingmsg,parse_mode='HTML')
 							bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-							ethplorerscan = Ethplorer().scanaddress(address)
+							ethplorerscan = Calculations().getalltokens(address)
+							print(ethplorerscan)
 							msg = Pmessage().pmsg(address,username,ethplorerscan)
 							bot.sendMessage(chat_id=update.message.chat_id, text=msg,parse_mode='HTML')
 					else:
@@ -374,7 +385,7 @@ class Commands():
 		ethprice = Cryptocompare().geturl('ETH')
 		kncprice = Cryptocompare().geturl('KNC')
 		ltcprice = Cryptocompare().geturl('LTC')
-
+		reqprice = Cryptocompare().geturl('REQ')
 		msg = "💱 CryptoCompare Prices\n"
 		msg += "<b>Bitcoin</b>\n"
 		msg += CryptoComparemsg().cryptomsg(btcprice)
@@ -384,6 +395,8 @@ class Commands():
 		msg += CryptoComparemsg().cryptomsg(kncprice)
 		msg += "<b>LiteCoin</b>\n"
 		msg += CryptoComparemsg().cryptomsg(ltcprice)
+		msg += "<b>Request Network Tokens</b>\n"
+		msg += CryptoComparemsg().cryptomsg(reqprice)
 		return msg
 
 	def coinhakomsg():
