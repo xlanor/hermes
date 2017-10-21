@@ -15,18 +15,6 @@ class Pmessage():
 		usdlist = []
 		sgdlist = []
 		keylist = list(ethplorerscan.keys())
-		try:
-			keylist.remove('MTH') #problematic coins. emailed ethplorer dev.
-		except:
-			pass
-		try:
-			keylist.remove('CVC')
-		except:
-			pass
-		try:
-			keylist.remove('CND')
-		except:
-			pass
 		calcmsg = ""
 		countmsg = "💵You have the following in your wallet: \n"
 		countlist = []

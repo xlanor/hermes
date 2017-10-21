@@ -31,8 +31,6 @@ class Cryptocompare():
 			coinli.append({"usd":usdval})
 			coinli.append({"sgd":sgdval})
 			coinli = coinli + get24h
-			print(get24h)
-			print(coinli)
 			return coinli
 
 	def convertusdsgd(self,value):
@@ -52,19 +50,25 @@ class Cryptocompare():
 						ticker_id = data[0]
 						url = "https://api.coinmarketcap.com/v1/ticker/"+ticker_id+"/"
 						cmcjson = sess.get(url).json()
-						cmcurl = cmcjson[0]
 						try:
-							cmcurl['percent_change_1h']
-							cmcurl['percent_change_24h']
-							cmcurl['percent_change_7d']
+							cmcurl = cmcjson[0]
+							try:
+								cmcurl['percent_change_1h']
+								cmcurl['percent_change_24h']
+								cmcurl['percent_change_7d']
+							except:
+								hli.append({"1h":'-'})
+								hli.append({"24h":'-'})
+								hli.append({"7d":'-'})
+							else:
+								hli.append({"1h":cmcurl['percent_change_1h']})
+								hli.append({"24h":cmcurl['percent_change_24h']})
+								hli.append({"7d":cmcurl['percent_change_7d']})
 						except:
 							hli.append({"1h":'-'})
 							hli.append({"24h":'-'})
 							hli.append({"7d":'-'})
-						else:
-							hli.append({"1h":cmcurl['percent_change_1h']})
-							hli.append({"24h":cmcurl['percent_change_24h']})
-							hli.append({"7d":cmcurl['percent_change_7d']})
+
 					else:
 						print("cant find")
 						hli.append({"1h":'-'})

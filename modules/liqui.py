@@ -6,26 +6,29 @@
 # For hermes
 # Written by xlanor
 ##
-import json
-import logging
-import requests
+import json,logging,requests
 from currency_converter import CurrencyConverter
+import sys
+sys.path.append("/home/elanor/ftp/files/modules")
+from modules.cryptocompare import Cryptocompare
+
+sess = requests.Session()
+adapter = requests.adapters.HTTPAdapter(max_retries = 20)
+sess.mount('https://', adapter)
 
 class Liqui():
 	def knceth(self):
-		knc = requests.get("https://api.liqui.io/api/3/ticker/knc_eth").json()
+		knc = sess.get("https://api.liqui.io/api/3/ticker/knc_eth").json()
 		knc_buy_price = knc["knc_eth"]["buy"]
 		knc_sell_price = knc["knc_eth"]["sell"]
-		ethersgd = self.ethsgd()
-		etherusd = self.ethusd()
-		for each in ethersgd:
-			if "esellsgd" in each:
-				ethsgd = each['esellsgd']
-		for each in etherusd:
-			if "esellusd" in each:
-				ethusd = each['esellusd']
+		ethval = Cryptocompare().geturl('ETH')
+		for each in ethval:
+			if "sgd" in each:
+				ethsgd = each['sgd']
+			elif "usd" in each:
+				ethusd = each['usd']
 		#Liqui does not support eth -> SGD/USD.
-		#We're going to use coinhako's rate to calculate.
+		#We're going to use cryptocompare's rate to calculate.
 		#We're using the sell price for this calculation.
 		kncbuysgd = float(knc_buy_price) * float(ethsgd)
 		kncbuyusd = float(knc_buy_price) * float(ethusd)
@@ -40,28 +43,4 @@ class Liqui():
 		kncli.append({"kncsellusd":kncsellusd})
 		return kncli
 
-	def geteth(self):
-		eth = requests.get("https://api.gemini.com/v1/pubticker/ethusd").json()
-		return eth	
-
-	def ethusd(self):
-		eth = self.geteth()
-		ethli = []
-		eth_buy_price = eth['bid']
-		eth_sell_price = eth['ask']
-		ethli.append({"ebuyusd":eth_buy_price})
-		ethli.append({"esellusd":eth_sell_price})
-		return ethli
-
-	def ethsgd(self):
-		eth = self.geteth()
-		ethli = []
-		eth_buy_price = eth['bid']
-		eth_sell_price = eth['ask']
-		c = CurrencyConverter()
-		converted_eth_buy_price = c.convert(float(eth_buy_price),'USD','SGD')
-		converted_eth_sell_price = c.convert(float(eth_sell_price),'USD','SGD')
-		ethli.append({"ebuysgd":converted_eth_buy_price})
-		ethli.append({"esellsgd":converted_eth_sell_price})
-		return ethli
-
+	
