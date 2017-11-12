@@ -140,10 +140,8 @@ class Commands():
 	def alert(bot,job): 
 		try:
 			cryptocompare = Commands.cryptocomparemsg()
-			liquimessage = Commands.liquimsg()
-			fullmessage = cryptocompare + "\n" + liquimessage 
-			fullmessage += "\n "
-			bot.sendMessage(chat_id=channels.channellist('stagingchannel'),text=fullmessage,parse_mode='HTML')
+			
+			bot.sendMessage(chat_id=channels.channellist('stagingchannel'),text=cryptocompare,parse_mode='HTML')
 		except:
 			catcherror = traceback.format_exc()
 			bot.sendMessage(chat_id=channels.channellist('errorchannel'), text=str(catcherror),parse_mode='HTML')
@@ -382,6 +380,7 @@ class Commands():
 
 	def cryptocomparemsg():
 		btcprice = Cryptocompare().geturl('BTC')
+		bchprice = Cryptocompare().geturl('BCH')
 		ethprice = Cryptocompare().geturl('ETH')
 		kncprice = Cryptocompare().geturl('KNC')
 		ltcprice = Cryptocompare().geturl('LTC')
@@ -389,6 +388,8 @@ class Commands():
 		msg = "💱 CryptoCompare Prices\n"
 		msg += "<b>Bitcoin</b>\n"
 		msg += CryptoComparemsg().cryptomsg(btcprice)
+		msg += "<b>Bitcoin Cash</b>\n"
+		msg += CryptoComparemsg().cryptomsg(bchprice)
 		msg += "<b>Ethereum</b>\n"
 		msg += CryptoComparemsg().cryptomsg(ethprice)
 		msg += "<b>Kyber Network Crystals</b>\n"
@@ -516,6 +517,36 @@ class Commands():
 				knc += "🇺🇸💰USD Sell: $"
 				knc += str(round(each["kncsellusd"],2))
 				knc += "\n"
+
+		knc += "<b>Request Network Token Price: </b>\n"
+		reqlist = []
+		reqlist = reqlist + (Liqui().reqeth())
+		for each in reqlist:
+			if "reqbuy" in each:
+				knc += "💸Buy: "
+				knc += str(each["reqbuy"])
+				knc += "ETH \n"
+			elif "reqsell" in each:
+				knc += "💰Sell: "
+				knc += str(each["reqsell"])
+				knc += "ETH \n"
+			elif "reqbuysgd" in each:
+				knc += "🇸🇬💸SGD Buy: $"
+				knc += str(round(each["reqbuysgd"],2))
+				knc += "\n"
+			elif "reqsellsgd" in each:
+				knc += "🇸🇬💰SGD Sell: $"
+				knc += str(round(each["reqsellsgd"],2))
+				knc += "\n"
+			elif "reqbuyusd" in each:
+				knc += "🇺🇸💸USD Buy: $"
+				knc += str(round(each["reqbuyusd"],2))
+				knc += "\n"
+			elif "reqsellusd" in each:
+				knc += "🇺🇸💰USD Sell: $"
+				knc += str(round(each["reqsellusd"],2))
+				knc += "\n"
+
 
 		combinedmessage = "🚀<b>Liqui Prices</b>\n" + knc
 		return combinedmessage
