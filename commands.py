@@ -43,7 +43,7 @@ class Commands():
 						message = "You are registered with Hermes.\n"
 						message = "Would you like to update your wallet ID?"
 						reply_kb = [['Yes'],['No']]
-						markup = ReplyKeyboardMarkup(reply_kb, one_time_keyboard=True)
+						markup = ReplyKeyboardMarkup(reply_kb, one_time_keyboard=True, selective=True)
 						update.message.reply_text(message,reply_markup=markup,parse_mode='HTML')
 						#returns UPDATE, defined in states in hermes.
 						return UPDATE 
