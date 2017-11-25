@@ -16,6 +16,8 @@ def hermes():
 	updater = Updater(token=bottoken.token("staging"))
 	dispatcher = updater.dispatcher
 	#commands
+	start_handler = CommandHandler('deactivatekb', Commands.removekb)
+	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('hako', Commands.hako)
 	dispatcher.add_handler(start_handler)
 	start_handler = CommandHandler('liqui', Commands.liqui)
@@ -34,7 +36,7 @@ def hermes():
 		states={
 			USERNAME: [MessageHandler(Filters.text,Commands.name)],
 			NEWWALLET: [MessageHandler(Filters.text,Commands.wallet)],
-			UPDATE: [RegexHandler('^(Yes)$', Commands.newwallet),RegexHandler('^(No)$', Commands.cancel)],
+			UPDATE: [RegexHandler('(?iii)Yes', Commands.newwallet),RegexHandler('(?iii)No', Commands.cancel)],
 			WALLET: [MessageHandler(Filters.text,Commands.wallet)]
 		},
 

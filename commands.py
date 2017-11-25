@@ -18,11 +18,24 @@ from modules.portfoliocalculator import Calculations
 from tokens import channels,SQL
 from contextlib import closing
 import traceback,time,requests,string,pymysql,datetime
-from telegram import ReplyKeyboardMarkup,ChatAction
+from telegram import ReplyKeyboardMarkup,ChatAction,ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler,Job,ConversationHandler
 
 WALLET, USERNAME, UPDATE, NEWWALLET = range(4) #declares states for hermes. Imported in main folder
 class Commands():
+	def removekb (bot,update):
+		try:
+			username = update.message.from_user.id
+			if (channels.admin(username) == "admin"):
+				message = "Removing all Inline Keyboards"
+				update.message.reply_text(message,reply_markup=ReplyKeyboardRemove(),parse_mode='HTML')
+			else:
+				message = "I'm not the droid you're looking for, please contact an administrator to perform this command."
+				update.message.reply_text(message,parse_mode='HTML')
+		except:
+			catcherror = traceback.format_exc()
+			bot.sendMessage(chat_id=channels.channellist('errorchannel'), text=str(catcherror),parse_mode='HTML')
+			
 	def register(bot,update): #checks if usn exists.
 		try:
 			with closing(pymysql.connect(SQL.sqlinfo('host'),SQL.sqlinfo('usn'),SQL.sqlinfo('pw'),SQL.sqlinfo('db'),charset='utf8')) as conn:
@@ -41,10 +54,9 @@ class Commands():
 					#else, TG username exist, update wallet ID?
 					else: 
 						message = "You are registered with Hermes.\n"
-						message = "Would you like to update your wallet ID?"
-						reply_kb = [['Yes'],['No']]
-						markup = ReplyKeyboardMarkup(reply_kb, one_time_keyboard=True, selective=True)
-						update.message.reply_text(message,reply_markup=markup,parse_mode='HTML')
+						message = "Would you like to update your wallet ID?\n"
+						message += "Please reply with a yes or no (case-insensitive)"
+						update.message.reply_text(message,parse_mode='HTML')
 						#returns UPDATE, defined in states in hermes.
 						return UPDATE 
 		except:
